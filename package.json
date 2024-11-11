@@ -1,0 +1,19 @@
+{
+  "name": "qoutes-express",
+  "version": "1.0.0",
+  "description": "Project for learning node.js ",
+  "main": "app.js",
+  "scripts": {
+    "dev": "nodemon app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  },
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^4.21.1",
+    "morgan": "^1.10.0"
+  }
+}
