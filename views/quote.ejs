@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quote</title>
+    <link rel="stylesheet" href="/main.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body class="animated-bg">
+    <header id="main-header">
+        <nav class="nav-links">
+            <a href="/quotes" class="nav-link">All Quotes</a>
+        </nav>
+    </header>
+    <div id="quote-container">
+        <h1 class="solo-quote"><%= quote.text %></h1>
+        <h2 class="solo-author"><%= quote.author %></h2>        
+    </div>
+    <div class="button-container">
+        <button id="download-btn" class="button">Download without background</button>
+        <button id="download-btn-bg" class="button">Download with background</button>
+    </div>
+    <footer>
+        made with Node.js, Express, EJS, MongoDB
+    </footer>
+    <script>
+        document.getElementById("download-btn").addEventListener("click", () => {
+            html2canvas(document.querySelector("#quote-container"), {
+                backgroundColor: null 
+            }).then((canvas) => {
+                const dataURL = canvas.toDataURL("image/png");
+
+                const downloadLink = document.createElement("a");
+                downloadLink.href = dataURL;
+                downloadLink.download = "<%= quote.author %>'s quote.png"; 
+                
+                downloadLink.click();
+            });
+        });
+
+        document.getElementById("download-btn-bg").addEventListener("click", () => {
+        const quoteContainer = document.querySelector("#quote-container");
+
+        const clone = quoteContainer.cloneNode(true);
+        clone.style.position = "absolute"; 
+        clone.style.left = "-9999px";  
+        clone.style.background = "linear-gradient(to right, #0f766e, #0e7490)";
+
+        document.body.appendChild(clone);
+
+        html2canvas(clone, {
+            backgroundColor: null 
+        }).then((canvas) => {
+            const dataURL = canvas.toDataURL("image/png");
+
+            document.body.removeChild(clone);
+
+            const downloadLink = document.createElement("a");
+            downloadLink.href = dataURL;
+            downloadLink.download = `<%= quote.author %>'s quote-bg.png`; 
+
+            downloadLink.click();
+        });
+    });
+    </script>      
+</body>
+</html>

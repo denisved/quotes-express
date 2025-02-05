@@ -1,47 +1,45 @@
 const express = require('express');
-const path = require('path');
 const morgan = require('morgan');
+const mongoose = require('mongoose');
+const methodOverride = require('method-override')
+const quouteRoutes = require('./routes/quote-routes')
+const createPath = require('./helpers/create-path');
+const qouteApiRoutes = require('./routes/api-quote-routes')
+require('dotenv').config();
 
 const app = express();
 
 app.set('view engine', 'ejs');
 
-const PORT = 3000;
+const PORT = process.env.PORT;
+const DB = process.env.MONGO_URL;
 
-const createPath = (page) => path.resolve(__dirname, 'views', `${page}.ejs`) 
+mongoose
+    .connect(DB)
+    .then(() => {console.log('connected to DB')})
+    .catch((err) => {console.log(err)});
 
 app.use(express.static('styles'));
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
+
+app.use(express.urlencoded({ extended: false }));
+
+app.use(methodOverride('_method'));
 
 app.listen(PORT, (error) => {
     error ? console.log(error) : console.log(`listening port ${PORT}`);
 });
 
 app.get('/', (req, res) => {
-    const title = 'Home';
-    res.render(createPath('index'), { title });
+    res.render(createPath('index'));
 });
 
-app.get('/quotes', (req, res) => {
-    const title = 'Quoutes';
-    res.render(createPath('quotes'), { title });
-});
-
-app.get('/add-quote', (req, res) => {
-    const title = 'Add Quote'
-    res.render(createPath('add-quote'), { title });
-});
-
-
-app.get('/edit-quote', (req, res) => {
-    const title = 'Edit Quote';
-    res.render(createPath('edit-quote'), { title });
-});
+app.use(quouteRoutes);
+app.use(qouteApiRoutes);
 
 app.use((req, res) => {
-    const title = 'Error';
     res
       .status(404)
-      .render(createPath('error'), { title });
+      .render(createPath('error'));
 });
